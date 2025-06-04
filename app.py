@@ -98,9 +98,20 @@ with st.form("arve_form"):
         with col1:
             kirjeldus = st.text_input(f"Kirjeldus {i}", "")
         with col2:
-            kogus = st.number_input(f"Kogus {i}", 0, step=1, key=f"k{i}")
+            kogus_str = st.text_input(f"Kogus {i}", "0", key=f"k{i}")
+            try:
+                kogus = float(kogus_str.replace(",", "."))
+            except ValueError:
+                kogus = 0.0
+                st.error("Sisesta kogus numbrina (nt 3,5)")
+        
         with col3:
-            hind = st.number_input(f"Hind {i}", 0, step=1, key=f"h{i}")
+            hind_str = st.text_input(f"Hind {i}", "0", key=f"h{i}")
+            try:
+                hind = float(hind_str.replace(",", "."))
+            except ValueError:
+                hind = 0.0
+                st.error("Sisesta hind numbrina (nt 12,99)")
         with col4:
             km = st.selectbox(f"KM% {i}", [0, 9, 20], key=f"km{i}")
         if kirjeldus and kogus and hind:

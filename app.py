@@ -15,9 +15,7 @@ def num_to_estonian_words_full(number):
                 "kuuskümmend", "seitsekümmend", "kaheksakümmend", "üheksakümmend"]
         hundreds = ["", "sada", "kakssada", "kolmsada", "nelisada", "viissada",
                     "kuussada", "seitsesada", "kaheksasada", "üheksasada"]
-
-        if n == 0:
-            return "null"
+        if n == 0: return "null"
         words = []
         if n >= 1000:
             words.append(ones[n // 1000] + " tuhat")
@@ -36,7 +34,6 @@ def num_to_estonian_words_full(number):
 
     eurod = int(number)
     sendid = round((number - eurod) * 100)
-
     if sendid > 0:
         return f"{num_to_estonian_words(eurod)} eurot ja {num_to_estonian_words(sendid)} senti"
     else:
@@ -57,7 +54,6 @@ with st.form("arve_form"):
         esitaja_tel = st.text_input("Telefon", "+372 555 1234")
         esitaja_email = st.text_input("E-post", "info@naidisfirma.ee")
         esitaja_pank = st.text_input("Panga nimi", "SEB")
-
     klient = st.text_input("Klient", "OÜ Klient")
 
     st.markdown("### Arveread")
@@ -111,4 +107,4 @@ if submitted and arveread:
 
     st.markdown("### 📄 Arve eelvaade")
     st.components.v1.html(html_out, height=850, scrolling=True)
-    st.markdown("👉 **Prindi arve oma brauseri kaudu (Ctrl+P või Cmd+P) ja vali 'Salvesta PDF'**")
+    st.markdown("👉 **Prindi arve oma brauseri kaudu või kasuta allolevat nuppu**")

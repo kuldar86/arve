@@ -2,7 +2,7 @@ import streamlit as st
 from jinja2 import Template
 from datetime import date
 
-st.set_page_config(page_title="Arve generaator", layout="centered")
+st.set_page_config(page_title="Arve genereerimise tööriist", layout="centered")
 
 st.title("🧾 Arve genereerimise tööriist")
 
@@ -89,6 +89,7 @@ with st.form("arve_form"):
         esitaja_email = st.text_input("E-post", "info@naidisfirma.ee")
         esitaja_pank = st.text_input("Panga nimi", "SEB")
     klient = st.text_input("Klient", "OÜ Klient")
+    klient_regnr = st.text_input("Kliendi registrikood", "87654321")
 
     st.markdown("### Arveread")
     arveread = []
@@ -134,7 +135,8 @@ if submitted and arveread:
         esitaja_email=esitaja_email,
         esitaja_pank=esitaja_pank,
         klient=klient,
-        read=arveread,
+        klient_regnr=klient_regnr,
+    read=arveread,
         kokku="{:,.2f}".format(kokku).replace('.', ','),
         summa_sõnadega=summa_sõnadega
     )

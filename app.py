@@ -1,8 +1,5 @@
 import streamlit as st
 from jinja2 import Template
-from weasyprint import HTML
-import tempfile
-import os
 from datetime import date
 from num2words import num2words
 
@@ -45,7 +42,7 @@ with st.form("arve_form"):
                 "summa": summa
             })
 
-    submitted = st.form_submit_button("Genereeri PDF")
+    submitted = st.form_submit_button("Näita arvet")
 
 if submitted and arveread:
     kokku = round(sum([r["summa"] for r in arveread]), 2)
@@ -67,9 +64,6 @@ if submitted and arveread:
         summa_sõnadega=summa_sõnadega
     )
 
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmpfile:
-        HTML(string=html_out).write_pdf(tmpfile.name)
-        st.success("✅ Arve genereeritud!")
-        with open(tmpfile.name, "rb") as f:
-            st.download_button("📥 Laadi alla PDF", f, file_name=f"{arve_nr}.pdf")
-        os.unlink(tmpfile.name)
+    st.markdown("### 📄 Arve eelvaade")
+    st.components.v1.html(html_out, height=800, scrolling=True)
+    st.markdown("👉 **Prindi arve oma brauseri kaudu (Ctrl+P või Cmd+P) ja vali 'Save as PDF'**")

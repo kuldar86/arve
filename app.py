@@ -2,7 +2,7 @@ import streamlit as st
 from jinja2 import Template
 from datetime import date
 
-st.set_page_config(page_title="Arve generaator", layout="centered")
+st.set_page_config(page_title="Arvegeneraator", layout="centered")
 
 st.title("🧾 Arve genereerimise tööriist")
 

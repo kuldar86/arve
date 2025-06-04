@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <title>Arve</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            font-size: 12pt;
+        }
+        h1 {
+            font-size: 20pt;
+            margin-bottom: 10px;
+        }
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .section {
+            margin-top: 10px;
+        }
+        .section table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 5px;
+        }
+        .section th, .section td {
+            border: 1px solid #999;
+            padding: 6px;
+            text-align: left;
+            vertical-align: top;
+        }
+        .total {
+            text-align: right;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .footer {
+            font-size: 10pt;
+            border-top: 1px solid #888;
+            padding-top: 10px;
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <h1>Arve {{ arve_nr }}</h1>
+    <div class="header-row">
+        <div>
+            <div>Arve esitaja:</div>
+            <div>{{ esitaja }}</div>
+            <div>Kuupäev: {{ kuupäev }}</div>
+            <div>Maksetähtaeg: {{ tähtaeg }}</div>
+        </div>
+        <div>
+            <strong>Klient:</strong><br>
+            {{ klient }}<br>
+            Reg nr: {{ klient_regnr }}
+        </div>
+    </div>
+
+    <div class="section">
+        <table>
+            <tr>
+                <th>Toode / teenus</th>
+                <th>Kogus</th>
+                <th>Hind</th>
+                <th>KM%</th>
+                <th>Kokku</th>
+            </tr>
+            {% for rida in read %}
+            <tr>
+                <td>{{ rida.toode }}</td>
+                <td>{{ rida.kogus }}</td>
+                <td>{{ rida.hind }}</td>
+                <td>{{ rida.km }}</td>
+                <td>{{ rida.kokku }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="total">
+        Summa kokku: {{ kokku }}<br>
+        Summa sõnadega: {{ summa_sõnadega }}
+    </div>
+
+    <div class="footer">
+        <div>
+            {{ esitaja }}<br>
+            Aadress: {{ aadress }}<br>
+            Reg nr: {{ regnr }}<br>
+            {% if kmkr == "on" %}
+            Ettevõte on käibemaksukohustuslane
+            {% else %}
+            Ettevõte ei ole käibemaksukohustuslane
+            {% endif %}
+        </div>
+        <div>
+            Tel: {{ telefon }}<br>
+            E-post: {{ email }}
+        </div>
+        <div>
+            Pank: {{ pank }}<br>
+            IBAN: {{ iban }}
+        </div>
+    </div>
+</body>
+</html>

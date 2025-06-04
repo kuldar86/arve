@@ -1,157 +1,50 @@
 import streamlit as st
+import datetime
 from jinja2 import Template
-from datetime import date
 
-st.set_page_config(page_title="Arvegeneraator", layout="centered")
+# Load the HTML template
+with open("arve_mall.html", "r", encoding="utf-8") as f:
+    html_template = f.read()
 
-st.title("🧾 Arve genereerimise tööriist")
+# Form inputs
+st.title("Arve generaator")
+esitaja = st.text_input("Arve esitaja (OÜ nimi)", "Näidisfirma OÜ")
+saaja = st.text_input("Arve saaja", "Klient AS")
+saaja_reg = st.text_input("Arve saaja registrikood", "12345678")
+saaja_kmkr = st.text_input("Arve saaja KMKR", "")
+kuupäev = st.date_input("Kuupäev", datetime.date.today())
+tähtaeg = st.date_input("Maksetähtaeg", datetime.date.today() + datetime.timedelta(days=7))
+kirjeldus = st.text_input("Toote/teenuse kirjeldus", "Teenuse osutamine")
+kogus = st.number_input("Kogus", 1, 100, 1)
+hind = st.number_input("Ühiku hind (€)", 1.0, 10000.0, 100.0)
+kmk = st.selectbox("Kas ettevõte on käibemaksukohustuslane?", ["on", "ei ole"])
+aadress = st.text_input("Aadress", "Näidistänav 1, Tallinn")
+tel = st.text_input("Telefon", "+372 555 1234")
+email = st.text_input("E-post", "info@naidisfirma.ee")
+pank = st.text_input("Pank", "SEB")
+iban = st.text_input("IBAN", "EE123456789012345678")
 
-def num_to_estonian_words_extended(number):
-    
-    def num_to_estonian_words(n):
-        ones = ["", "üks", "kaks", "kolm", "neli", "viis", "kuus", "seitse", "kaheksa", "üheksa"]
-        teens = ["kümme", "üksteist", "kaksteist", "kolmteist", "neliteist", "viisteist",
-                 "kuusteist", "seitseteist", "kaheksateist", "üheksateist"]
-        tens = ["", "", "kakskümmend", "kolmkümmend", "nelikümmend", "viiskümmend",
-                "kuuskümmend", "seitsekümmend", "kaheksakümmend", "üheksakümmend"]
-        hundreds = ["", "sada", "kakssada", "kolmsada", "nelisada", "viissada",
-                    "kuussada", "seitsesada", "kaheksasada", "üheksasada"]
-        if n == 0:
-            return "null"
-        words = []
-        if n >= 1_000_000:
-            milj = n // 1_000_000
-            words.append(num_to_estonian_words(milj) + " miljon")
-            n %= 1_000_000
-        if n >= 1000:
-            tuhanded = n // 1000
-            if tuhanded == 1:
-                words.append("üks tuhat")
-            else:
-                words.append(num_to_estonian_words(tuhanded) + " tuhat")
-            n %= 1000
-        if n >= 100:
-            words.append(hundreds[n // 100])
-            n %= 100
-        if 10 <= n < 20:
-            words.append(teens[n - 10])
-        else:
-            if n >= 20:
-                words.append(tens[n // 10])
-            if n % 10 > 0:
-                words.append(ones[n % 10])
-        return " ".join(words)
-
-        ones = ["", "üks", "kaks", "kolm", "neli", "viis", "kuus", "seitse", "kaheksa", "üheksa"]
-        teens = ["kümme", "üksteist", "kaksteist", "kolmteist", "neliteist", "viisteist",
-                 "kuusteist", "seitseteist", "kaheksateist", "üheksateist"]
-        tens = ["", "", "kakskümmend", "kolmkümmend", "nelikümmend", "viiskümmend",
-                "kuuskümmend", "seitsekümmend", "kaheksakümmend", "üheksakümmend"]
-        hundreds = ["", "sada", "kakssada", "kolmsada", "nelisada", "viissada",
-                    "kuussada", "seitsesada", "kaheksasada", "üheksasada"]
-        if n == 0: return "null"
-        words = []
-        if n >= 1000:
-            words.append(ones[n // 1000] + " tuhat")
-            n %= 1000
-        if n >= 100:
-            words.append(hundreds[n // 100])
-            n %= 100
-        if 10 <= n < 20:
-            words.append(teens[n - 10])
-        else:
-            if n >= 20:
-                words.append(tens[n // 10])
-            if n % 10 > 0:
-                words.append(ones[n % 10])
-        return " ".join(words)
-
-    eurod = int(number)
-    sendid = round((number - eurod) * 100)
-    if sendid > 0:
-        return f"{num_to_estonian_words(eurod)} eurot ja {num_to_estonian_words(sendid)} senti"
-    else:
-        return f"{num_to_estonian_words(eurod)} eurot"
-
-with st.form("arve_form"):
-    col1, col2 = st.columns(2)
-    with col1:
-        arve_nr = st.text_input("Arve number", "ARV-001")
-        kuupäev = st.date_input("Kuupäev", value=date.today())
-        tähtaeg = st.date_input("Maksetähtaeg")
-    with col2:
-        esitaja = st.text_input("Arve esitaja", "OÜ Näidisfirma")
-        esitaja_regnr = st.text_input("Registrikood", "12345678")
-        esitaja_iban = st.text_input("IBAN", "EE123456789012345678")
-        esitaja_aadress = st.text_input("Registreeritud aadress", "Näidistänav 1, Tallinn")
-        esitaja_kmk = st.selectbox("Käibemaksukohustuslane", ["on", "ei ole"])
-        esitaja_tel = st.text_input("Telefon", "+372 555 1234")
-        esitaja_email = st.text_input("E-post", "info@naidisfirma.ee")
-        esitaja_pank = st.text_input("Panga nimi", "SEB")
-    klient = st.text_input("Klient", "OÜ Klient")
-    klient_regnr = st.text_input("Kliendi registrikood", "87654321")
-
-    st.markdown("### Arveread")
-    arveread = []
-    for i in range(1, 6):
-        col1, col2, col3, col4 = st.columns([4, 2, 2, 2])
-        with col1:
-            kirjeldus = st.text_input(f"Kirjeldus {i}", "")
-        with col2:
-            kogus_str = st.text_input(f"Kogus {i}", "0", key=f"k{i}")
-            try:
-                kogus = float(kogus_str.replace(",", "."))
-            except ValueError:
-                kogus = 0.0
-                st.error("Sisesta kogus numbrina (nt 3,5)")
-        
-        with col3:
-            hind_str = st.text_input(f"Hind {i}", "0", key=f"h{i}")
-            try:
-                hind = float(hind_str.replace(",", "."))
-            except ValueError:
-                hind = 0.0
-                st.error("Sisesta hind numbrina (nt 12,99)")
-        with col4:
-            km = st.selectbox(f"KM% {i}", [0, 9, 20], key=f"km{i}")
-        if kirjeldus and kogus and hind:
-            summa = round(kogus * hind * (1 + km / 100), 2)
-            arveread.append({
-                "kirjeldus": kirjeldus,
-                "kogus": kogus,
-                "hind": hind,
-                "km": km,
-                "summa": summa
-            })
-
-    submitted = st.form_submit_button("Näita arvet")
-
-if submitted and arveread:
-    kokku = round(sum([r["summa"] for r in arveread]), 2)
-    summa_sõnadega = num_to_estonian_words_extended(kokku).capitalize()
-
-    with open("arve_mall.html") as f:
-        html_template = Template(f.read())
-
-    html_out = html_template.render(
-        arve_nr=arve_nr,
+# Generate HTML preview
+if st.button("Kuva arve"):
+    summa = kogus * hind
+    kmk_text = "ettevõte on käibemaksukohustuslane" if kmk == "on" else "ettevõte ei ole käibemaksukohustuslane"
+    html_filled = Template(html_template).render(
+        esitaja=esitaja,
+        saaja=saaja,
+        saaja_reg=saaja_reg,
+        saaja_kmkr=saaja_kmkr,
         kuupäev=kuupäev.strftime("%d.%m.%Y"),
         tähtaeg=tähtaeg.strftime("%d.%m.%Y"),
-        esitaja=esitaja,
-        esitaja_iban=esitaja_iban,
-        esitaja_regnr=esitaja_regnr,
-        esitaja_aadress=esitaja_aadress,
-        esitaja_kmk=esitaja_kmk,
-        esitaja_tel=esitaja_tel,
-        esitaja_email=esitaja_email,
-        esitaja_pank=esitaja_pank,
-        klient=klient,
-        klient_regnr=klient_regnr,
-    read=arveread,
-        kokku="{:,.2f}".format(kokku).replace('.', ','),
-        summa_sõnadega=summa_sõnadega
+        kirjeldus=kirjeldus,
+        kogus=kogus,
+        hind=hind,
+        summa="{:.2f}".format(summa).replace(".", ","),
+        summa_sõnadega=f"{int(summa)} eurot ja {int((summa % 1) * 100)} senti".replace(".", ","),
+        kmk=kmk_text,
+        aadress=aadress,
+        tel=tel,
+        email=email,
+        pank=pank,
+        iban=iban
     )
-
-    st.markdown("### 📄 Arve eelvaade")
-    st.components.v1.html(html_out, height=850, scrolling=True)
-    st.markdown("👉 **Prindi arve oma brauseri kaudu või kasuta allolevat nuppu**")
+    st.components.v1.html(html_filled, height=1300, scrolling=True)

@@ -1,12 +1,49 @@
 import streamlit as st
 from jinja2 import Template
 from datetime import date
-from num2words import num2words
 
-st.set_page_config(page_title="Arve genereerija", layout="centered")
+st.set_page_config(page_title="Arve genereerimise tööriist", layout="centered")
 
 st.title("🧾 Arve genereerimise tööriist")
 
+# Funktsioon eurode ja sentide teisendamiseks sõnadeks (eesti keeles)
+def num_to_estonian_words_full(number):
+    def num_to_estonian_words(n):
+        ones = ["", "üks", "kaks", "kolm", "neli", "viis", "kuus", "seitse", "kaheksa", "üheksa"]
+        teens = ["kümme", "üksteist", "kaksteist", "kolmteist", "neliteist", "viisteist",
+                 "kuusteist", "seitseteist", "kaheksateist", "üheksateist"]
+        tens = ["", "", "kakskümmend", "kolmkümmend", "nelikümmend", "viiskümmend",
+                "kuuskümmend", "seitsekümmend", "kaheksakümmend", "üheksakümmend"]
+        hundreds = ["", "sada", "kakssada", "kolmsada", "nelisada", "viissada",
+                    "kuussada", "seitsesada", "kaheksasada", "üheksasada"]
+
+        if n == 0:
+            return "null"
+        words = []
+        if n >= 1000:
+            words.append(ones[n // 1000] + " tuhat")
+            n %= 1000
+        if n >= 100:
+            words.append(hundreds[n // 100])
+            n %= 100
+        if 10 <= n < 20:
+            words.append(teens[n - 10])
+        else:
+            if n >= 20:
+                words.append(tens[n // 10])
+            if n % 10 > 0:
+                words.append(ones[n % 10])
+        return " ".join(words)
+
+    eurod = int(number)
+    sendid = round((number - eurod) * 100)
+
+    if sendid > 0:
+        return f"{num_to_estonian_words(eurod)} eurot ja {num_to_estonian_words(sendid)} senti"
+    else:
+        return f"{num_to_estonian_words(eurod)} eurot"
+
+# Vorm
 with st.form("arve_form"):
     col1, col2 = st.columns(2)
     with col1:
@@ -17,9 +54,9 @@ with st.form("arve_form"):
         esitaja = st.text_input("Arve esitaja", "OÜ Näidisfirma")
         esitaja_iban = st.text_input("IBAN", "EE123456789012345678")
         esitaja_regnr = st.text_input("Registrikood", "12345678")
-
+    
     klient = st.text_input("Klient", "OÜ Klient")
-
+    
     st.markdown("### Arveread")
     arveread = []
     for i in range(1, 6):
@@ -46,7 +83,7 @@ with st.form("arve_form"):
 
 if submitted and arveread:
     kokku = round(sum([r["summa"] for r in arveread]), 2)
-    summa_sõnadega = num2words(kokku, lang="et").capitalize()
+    summa_sõnadega = num_to_estonian_words_full(kokku).capitalize()
 
     with open("arve_mall.html") as f:
         html_template = Template(f.read())
@@ -66,4 +103,4 @@ if submitted and arveread:
 
     st.markdown("### 📄 Arve eelvaade")
     st.components.v1.html(html_out, height=800, scrolling=True)
-    st.markdown("👉 **Prindi arve oma brauseri kaudu (Ctrl+P või Cmd+P) ja vali 'Save as PDF'**")
+    st.markdown("👉 **Prindi arve oma brauseri kaudu (Ctrl+P või Cmd+P) ja vali 'Salvesta PDF'**")

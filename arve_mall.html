@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 12pt; padding: 30px; }
+        h1 { font-size: 18pt; margin-bottom: 10px; }
+
+        .header, .footer {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .section {
+            margin-top: 30px;
+        }
+
+        .section table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .section th, .section td {
+            border: 1px solid #444;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .right-align { text-align: right; }
+        .bold { font-weight: bold; }
+
+        .footer {
+            font-size: 10pt;
+            margin-top: 40px;
+            border-top: 1px solid #888;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Arve {{ arve_nr }}</h1>
+
+    <div class="header">
+        <div>
+            <strong>Arve esitaja:</strong><br>
+            {{ esitaja }}<br>
+            Reg nr: {{ esitaja_regnr }}<br>
+            IBAN: {{ esitaja_iban }}<br>
+        </div>
+        <div>
+            <strong>Klient:</strong><br>
+            {{ klient }}<br><br>
+            <strong>Kuupäev:</strong> {{ kuupäev }}<br>
+            <strong>Maksetähtaeg:</strong> {{ tähtaeg }}
+        </div>
+    </div>
+
+    <div class="section">
+        <table>
+            <tr>
+                <th>Kirjeldus</th>
+                <th>Kogus</th>
+                <th>Hind (€)</th>
+                <th>KM%</th>
+                <th>Summa (€)</th>
+            </tr>
+            {% for r in read %}
+            <tr>
+                <td>{{ r.kirjeldus }}</td>
+                <td class="right-align">{{ r.kogus }}</td>
+                <td class="right-align">{{ r.hind }}</td>
+                <td class="right-align">{{ r.km }}</td>
+                <td class="right-align">{{ r.summa }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="section right-align">
+        <p class="bold">Kokku: {{ kokku }} €</p>
+        <p>Summa sõnadega: {{ summa_sõnadega }} eurot</p>
+    </div>
+
+    <div class="footer">
+        <div>{{ esitaja }} • Reg nr {{ esitaja_regnr }}</div>
+        <div>IBAN: {{ esitaja_iban }}</div>
+    </div>
+
+</body>
+</html>

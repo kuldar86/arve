@@ -80,7 +80,6 @@ with st.form("arve_form"):
         except ValueError:
             kogus = 0.0
             st.error("Sisesta kogus numbrina (nt 3,5)")
-    
     with col3:
         hind_str = st.text_input(f"Hind {i}", "0", key=f"h{i}")
         try:

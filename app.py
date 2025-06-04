@@ -11,7 +11,7 @@ st.title("Arve generaator")
 esitaja = st.text_input("Arve esitaja (OÜ nimi)", "Näidisfirma OÜ")
 saaja = st.text_input("Arve saaja", "Klient AS")
 saaja_reg = st.text_input("Arve saaja registrikood", "12345678")
-saaja_kmkr = st.text_input("Arve saaja KMKR", "")
+klient_kmkr = st.text_input("Arve saaja KMKR", "")
 kuupäev = st.date_input("Kuupäev", datetime.date.today())
 tähtaeg = st.date_input("Maksetähtaeg", datetime.date.today() + datetime.timedelta(days=7))
 kirjeldus = st.text_input("Toote/teenuse kirjeldus", "Teenuse osutamine")
@@ -32,15 +32,15 @@ if st.button("Kuva arve"):
         esitaja=esitaja,
         saaja=saaja,
         saaja_reg=saaja_reg,
-        saaja_kmkr=saaja_kmkr,
         kuupäev=kuupäev.strftime("%d.%m.%Y"),
         tähtaeg=tähtaeg.strftime("%d.%m.%Y"),
         kirjeldus=kirjeldus,
         kogus=kogus,
         hind=hind,
-        summa="{:.2f}".format(summa).replace(".", ","),
-        summa_sõnadega=f"{int(summa)} eurot ja {int((summa % 1) * 100)} senti".replace(".", ","),
+        summa="{: ,2f}".format(summa),
+        summa_sõnadega = f"{int(summa)} eurot ja {int((summa % 1) * 100)} senti".replace(".", ","),
         kmk=kmk_text,
+        klient_kmkr=klient_kmkr,
         aadress=aadress,
         tel=tel,
         email=email,

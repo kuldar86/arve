@@ -6,7 +6,6 @@ st.set_page_config(page_title="Arve genereerimise tööriist", layout="centered"
 
 st.title("🧾 Arve genereerimise tööriist")
 
-# Funktsioon eurode ja sentide teisendamiseks sõnadeks (eesti keeles)
 def num_to_estonian_words_full(number):
     def num_to_estonian_words(n):
         ones = ["", "üks", "kaks", "kolm", "neli", "viis", "kuus", "seitse", "kaheksa", "üheksa"]
@@ -43,7 +42,6 @@ def num_to_estonian_words_full(number):
     else:
         return f"{num_to_estonian_words(eurod)} eurot"
 
-# Vorm
 with st.form("arve_form"):
     col1, col2 = st.columns(2)
     with col1:
@@ -52,11 +50,16 @@ with st.form("arve_form"):
         tähtaeg = st.date_input("Maksetähtaeg")
     with col2:
         esitaja = st.text_input("Arve esitaja", "OÜ Näidisfirma")
-        esitaja_iban = st.text_input("IBAN", "EE123456789012345678")
         esitaja_regnr = st.text_input("Registrikood", "12345678")
-    
+        esitaja_iban = st.text_input("IBAN", "EE123456789012345678")
+        esitaja_aadress = st.text_input("Registreeritud aadress", "Näidistänav 1, Tallinn")
+        esitaja_kmk = st.selectbox("Käibemaksukohustuslane", ["on", "ei ole"])
+        esitaja_tel = st.text_input("Telefon", "+372 555 1234")
+        esitaja_email = st.text_input("E-post", "info@naidisfirma.ee")
+        esitaja_pank = st.text_input("Panga nimi", "SEB")
+
     klient = st.text_input("Klient", "OÜ Klient")
-    
+
     st.markdown("### Arveread")
     arveread = []
     for i in range(1, 6):
@@ -68,7 +71,7 @@ with st.form("arve_form"):
         with col3:
             hind = st.number_input(f"Hind {i}", 0.0, step=1.0, key=f"h{i}")
         with col4:
-            km = st.number_input(f"KM% {i}", 20.0, step=0.0, key=f"km{i}")
+            km = st.selectbox(f"KM% {i}", [0, 9, 20], key=f"km{i}")
         if kirjeldus and kogus and hind:
             summa = round(kogus * hind * (1 + km / 100), 2)
             arveread.append({
@@ -95,12 +98,17 @@ if submitted and arveread:
         esitaja=esitaja,
         esitaja_iban=esitaja_iban,
         esitaja_regnr=esitaja_regnr,
+        esitaja_aadress=esitaja_aadress,
+        esitaja_kmk=esitaja_kmk,
+        esitaja_tel=esitaja_tel,
+        esitaja_email=esitaja_email,
+        esitaja_pank=esitaja_pank,
         klient=klient,
         read=arveread,
-        kokku=kokku,
+        kokku="{:,.2f}".format(kokku).replace('.', ','),
         summa_sõnadega=summa_sõnadega
     )
 
     st.markdown("### 📄 Arve eelvaade")
-    st.components.v1.html(html_out, height=800, scrolling=True)
+    st.components.v1.html(html_out, height=850, scrolling=True)
     st.markdown("👉 **Prindi arve oma brauseri kaudu (Ctrl+P või Cmd+P) ja vali 'Salvesta PDF'**")

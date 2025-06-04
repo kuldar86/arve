@@ -91,7 +91,7 @@ with st.form("arve_form"):
 
         with col4:
             km = st.selectbox(f"KM% {i}", [0, 9, 20], key=f"km{i}")
-        if kirjeldus and kogus and hind:
+        if kirjeldus and kogus > 0 and hind > 0:
             summa = round(kogus * hind * (1 + km / 100), 2)
             arveread.append({
                 "kirjeldus": kirjeldus,
@@ -100,6 +100,7 @@ with st.form("arve_form"):
                 "km": km,
                 "summa": summa
             })
+
 
     submitted = st.form_submit_button("Näita arvet")
 

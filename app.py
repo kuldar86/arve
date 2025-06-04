@@ -2,12 +2,46 @@ import streamlit as st
 from jinja2 import Template
 from datetime import date
 
-st.set_page_config(page_title="Arve genereerimise tööriist", layout="centered")
+st.set_page_config(page_title="Arve generaator", layout="centered")
 
 st.title("🧾 Arve genereerimise tööriist")
 
-def num_to_estonian_words_full(number):
+def num_to_estonian_words_extended(number):
+    
     def num_to_estonian_words(n):
+        ones = ["", "üks", "kaks", "kolm", "neli", "viis", "kuus", "seitse", "kaheksa", "üheksa"]
+        teens = ["kümme", "üksteist", "kaksteist", "kolmteist", "neliteist", "viisteist",
+                 "kuusteist", "seitseteist", "kaheksateist", "üheksateist"]
+        tens = ["", "", "kakskümmend", "kolmkümmend", "nelikümmend", "viiskümmend",
+                "kuuskümmend", "seitsekümmend", "kaheksakümmend", "üheksakümmend"]
+        hundreds = ["", "sada", "kakssada", "kolmsada", "nelisada", "viissada",
+                    "kuussada", "seitsesada", "kaheksasada", "üheksasada"]
+        if n == 0:
+            return "null"
+        words = []
+        if n >= 1_000_000:
+            milj = n // 1_000_000
+            words.append(num_to_estonian_words(milj) + " miljon")
+            n %= 1_000_000
+        if n >= 1000:
+            tuhanded = n // 1000
+            if tuhanded == 1:
+                words.append("üks tuhat")
+            else:
+                words.append(num_to_estonian_words(tuhanded) + " tuhat")
+            n %= 1000
+        if n >= 100:
+            words.append(hundreds[n // 100])
+            n %= 100
+        if 10 <= n < 20:
+            words.append(teens[n - 10])
+        else:
+            if n >= 20:
+                words.append(tens[n // 10])
+            if n % 10 > 0:
+                words.append(ones[n % 10])
+        return " ".join(words)
+
         ones = ["", "üks", "kaks", "kolm", "neli", "viis", "kuus", "seitse", "kaheksa", "üheksa"]
         teens = ["kümme", "üksteist", "kaksteist", "kolmteist", "neliteist", "viisteist",
                  "kuusteist", "seitseteist", "kaheksateist", "üheksateist"]
@@ -82,7 +116,7 @@ with st.form("arve_form"):
 
 if submitted and arveread:
     kokku = round(sum([r["summa"] for r in arveread]), 2)
-    summa_sõnadega = num_to_estonian_words_full(kokku).capitalize()
+    summa_sõnadega = num_to_estonian_words_extended(kokku).capitalize()
 
     with open("arve_mall.html") as f:
         html_template = Template(f.read())
